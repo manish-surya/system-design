@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "name": "zea",
+  "display_name": "ZEA — Architecture Intelligence",
+  "description": "Scans a software repository and produces an Architecture Knowledge Graph (AKG) with every service, API, database, event stream, and infrastructure component. Outputs structured JSON and a standalone 3D HTML visualization.",
+  "version": "0.1.0",
+  "author": "Zealous Engineering",
+  "license": "MIT",
+  "homepage": "https://github.com/zealous-engineering/zea",
+
+  "installation": {
+    "method": "pip",
+    "command": "pip install zea"
+  },
+
+  "cli": {
+    "executable": "zea",
+    "commands": [
+      {
+        "name": "analyze",
+        "description": "Full analysis: repository inventory, architecture graph, and HTML visualization",
+        "usage": "zea analyze <repo_path> [--output <dir>] [--verbose]",
+        "example": "zea analyze . --output .zea"
+      },
+      {
+        "name": "graph",
+        "description": "Build the Architecture Knowledge Graph only (no HTML)",
+        "usage": "zea graph <repo_path> [--output <dir>]",
+        "example": "zea graph . --output .zea"
+      },
+      {
+        "name": "report",
+        "description": "Generate a human-readable Markdown architecture report",
+        "usage": "zea report <repo_path> [--output <dir>]",
+        "example": "zea report . --output .zea"
+      }
+    ]
+  },
+
+  "outputs": [
+    {
+      "filename": "repository_inventory.json",
+      "default_path": ".zea/repository_inventory.json",
+      "description": "Detected languages, frameworks, package managers, and documentation files",
+      "format": "json"
+    },
+    {
+      "filename": "architecture_graph.json",
+      "default_path": ".zea/architecture_graph.json",
+      "description": "Full Architecture Knowledge Graph: nodes (services, APIs, databases, events, infra) and directed edges with evidence",
+      "format": "json",
+      "schema": {
+        "nodes": "Array of {id, type, name, metadata, evidence[]}",
+        "edges": "Array of {source, target, type, evidence[]}"
+      }
+    },
+    {
+      "filename": "architecture.html",
+      "default_path": ".zea/architecture.html",
+      "description": "Standalone interactive 3D visualization (Three.js). No server required — open directly in a browser.",
+      "format": "html"
+    }
+  ],
+
+  "capabilities": [
+    "Detects languages: Python, TypeScript, Go, Java, Rust, Ruby, C#, PHP",
+    "Detects frameworks: FastAPI, Django, Express, Spring Boot, Rails, NestJS, Laravel",
+    "Infers microservices, workers, API gateways, and monoliths",
+    "Maps REST, GraphQL, gRPC, and webhook API surfaces",
+    "Identifies databases: PostgreSQL, MySQL, MongoDB, Redis, DynamoDB, Elasticsearch",
+    "Traces messaging: Kafka, RabbitMQ, SQS, SNS with publisher/consumer relationships",
+    "Extracts domain events with producer-consumer topology",
+    "Detects Docker, Kubernetes, Terraform, Helm, and CI/CD infrastructure",
+    "Identifies external integrations: Stripe, Salesforce, Auth0, Twilio, and others",
+    "All inferences cite evidence: file paths, patterns matched, confidence scores"
+  ],
+
+  "suggested_prompts": [
+    "Run ZEA on this repo and tell me what services exist",
+    "What databases does the Order Service use?",
+    "Which services publish events and which consume them?",
+    "Are there any orphaned services (no inbound dependencies)?",
+    "What external integrations does this codebase use?",
+    "Trace the dependency chain from the API gateway to the database"
+  ]
+}

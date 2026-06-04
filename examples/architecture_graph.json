@@ -1,0 +1,548 @@
+{
+  "repository_name": "zea",
+  "repository_path": "/sessions/confident-ecstatic-sagan/mnt/ZEA (Zeal's Engine for Architectures)/zea",
+  "nodes": [
+    {
+      "id": "repo_zea",
+      "name": "zea",
+      "type": "repository",
+      "language": "python",
+      "framework": null,
+      "repository": null,
+      "owner": null,
+      "path": "/sessions/confident-ecstatic-sagan/mnt/ZEA (Zeal's Engine for Architectures)/zea",
+      "metadata": {
+        "languages": [
+          {
+            "language": "python",
+            "file_count": 37
+          }
+        ]
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "directory_structure",
+            "description": "Root repository node",
+            "source": "/sessions/confident-ecstatic-sagan/mnt/ZEA (Zeal's Engine for Architectures)/zea",
+            "confidence": 1.0,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "db_postgres",
+      "name": "PostgreSQL",
+      "type": "database",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {
+        "engine": "postgresql"
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "database_usage",
+            "description": "Found PostgreSQL usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          },
+          {
+            "type": "database_usage",
+            "description": "Found PostgreSQL usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "db_mysql",
+      "name": "MySQL",
+      "type": "database",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {
+        "engine": "mysql"
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "database_usage",
+            "description": "Found MySQL usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "db_mongodb",
+      "name": "MongoDB",
+      "type": "database",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {
+        "engine": "mongodb"
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "database_usage",
+            "description": "Found MongoDB usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "db_redis",
+      "name": "Redis",
+      "type": "cache",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {
+        "engine": "redis",
+        "type": "cache"
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "database_usage",
+            "description": "Found Redis usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "db_dynamodb",
+      "name": "DynamoDB",
+      "type": "database",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {
+        "engine": "dynamodb"
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "database_usage",
+            "description": "Found DynamoDB usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "db_sqlite",
+      "name": "SQLite",
+      "type": "database",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {
+        "engine": "sqlite"
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "database_usage",
+            "description": "Found SQLite usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "db_elasticsearch",
+      "name": "Elasticsearch",
+      "type": "database",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {
+        "engine": "elasticsearch"
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "database_usage",
+            "description": "Found Elasticsearch usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "db_cassandra",
+      "name": "Cassandra",
+      "type": "database",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {
+        "engine": "cassandra"
+      },
+      "evidence": {
+        "items": [
+          {
+            "type": "database_usage",
+            "description": "Found Cassandra usage in zea/inference/database_detector.py",
+            "source": "zea/inference/database_detector.py",
+            "confidence": 0.85,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "msg_kafka",
+      "name": "Kafka",
+      "type": "queue",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {},
+      "evidence": {
+        "items": [
+          {
+            "type": "package_dependency",
+            "description": "Found Kafka dependency in zea/inference/event_detector.py",
+            "source": "zea/inference/event_detector.py",
+            "confidence": 0.9,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "msg_rabbitmq",
+      "name": "RabbitMQ",
+      "type": "queue",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {},
+      "evidence": {
+        "items": [
+          {
+            "type": "package_dependency",
+            "description": "Found RabbitMQ dependency in zea/inference/event_detector.py",
+            "source": "zea/inference/event_detector.py",
+            "confidence": 0.9,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "msg_sqs",
+      "name": "AWS SQS",
+      "type": "queue",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {},
+      "evidence": {
+        "items": [
+          {
+            "type": "package_dependency",
+            "description": "Found AWS SQS dependency in zea/inference/event_detector.py",
+            "source": "zea/inference/event_detector.py",
+            "confidence": 0.9,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "msg_sns",
+      "name": "AWS SNS",
+      "type": "queue",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {},
+      "evidence": {
+        "items": [
+          {
+            "type": "package_dependency",
+            "description": "Found AWS SNS dependency in zea/inference/event_detector.py",
+            "source": "zea/inference/event_detector.py",
+            "confidence": 0.9,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "msg_nats",
+      "name": "NATS",
+      "type": "queue",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {},
+      "evidence": {
+        "items": [
+          {
+            "type": "package_dependency",
+            "description": "Found NATS dependency in zea/inference/event_detector.py",
+            "source": "zea/inference/event_detector.py",
+            "confidence": 0.9,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "msg_pubsub",
+      "name": "Google Pub/Sub",
+      "type": "queue",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {},
+      "evidence": {
+        "items": [
+          {
+            "type": "package_dependency",
+            "description": "Found Google Pub/Sub dependency in zea/inference/event_detector.py",
+            "source": "zea/inference/event_detector.py",
+            "confidence": 0.9,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    },
+    {
+      "id": "msg_bullmq",
+      "name": "BullMQ",
+      "type": "queue",
+      "language": null,
+      "framework": null,
+      "repository": "zea",
+      "owner": null,
+      "path": null,
+      "metadata": {},
+      "evidence": {
+        "items": [
+          {
+            "type": "package_dependency",
+            "description": "Found BullMQ dependency in zea/inference/event_detector.py",
+            "source": "zea/inference/event_detector.py",
+            "confidence": 0.9,
+            "details": {}
+          }
+        ]
+      },
+      "tags": []
+    }
+  ],
+  "edges": [
+    {
+      "source_id": "repo_zea",
+      "target_id": "db_postgres",
+      "type": "READS",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "db_mysql",
+      "type": "READS",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "db_mongodb",
+      "type": "READS",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "db_redis",
+      "type": "READS",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "db_dynamodb",
+      "type": "READS",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "db_sqlite",
+      "type": "READS",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "db_elasticsearch",
+      "type": "READS",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "db_cassandra",
+      "type": "READS",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "msg_kafka",
+      "type": "CONNECTS_TO",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "msg_rabbitmq",
+      "type": "CONNECTS_TO",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "msg_sqs",
+      "type": "CONNECTS_TO",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "msg_sns",
+      "type": "CONNECTS_TO",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "msg_nats",
+      "type": "CONNECTS_TO",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "msg_pubsub",
+      "type": "CONNECTS_TO",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    },
+    {
+      "source_id": "repo_zea",
+      "target_id": "msg_bullmq",
+      "type": "CONNECTS_TO",
+      "metadata": {},
+      "evidence": {
+        "items": []
+      }
+    }
+  ],
+  "metadata": {
+    "total_files": 38,
+    "has_tests": true,
+    "has_ci": false,
+    "primary_language": "python"
+  }
+}

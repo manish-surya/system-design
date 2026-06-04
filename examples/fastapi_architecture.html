@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ZEA — fastapi</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #f0f4ff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── Canvas ── */
+#canvas-wrap { position:fixed; inset:0; }
+#c { display:block; width:100%; height:100%; }
+
+/* ── Header ── */
+#header {
+  position:fixed; top:0; left:0; right:0; z-index:40;
+  height:52px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1.5px solid #dde3f5;
+  display:flex; align-items:center; gap:16px; padding:0 20px;
+  box-shadow: 0 2px 12px rgba(0,0,80,0.07);
+}
+#header .logo {
+  font-size:1rem; font-weight:700; letter-spacing:.08em;
+  color:#1565c0;
+}
+#header .repo-name {
+  font-size:.9rem; color:#37474f; font-weight:500;
+}
+.stat-pill {
+  display:flex; align-items:center; gap:5px;
+  background:#eef1fb; border:1px solid #c5cde8;
+  border-radius:20px; padding:3px 12px;
+  font-size:.75rem; color:#546e7a;
+}
+.stat-pill b { color:#1565c0; font-size:.82rem; }
+
+#search {
+  margin-left:auto;
+  padding:5px 14px;
+  border:1.5px solid #c5cde8; border-radius:20px;
+  background:#fff; font-size:.8rem; color:#263238;
+  outline:none; width:180px;
+  transition: border .2s;
+}
+#search:focus { border-color:#1565c0; }
+
+/* ── Side panel ── */
+#panel {
+  position:fixed; right:0; top:52px; bottom:0; z-index:35;
+  width:280px;
+  background:rgba(255,255,255,0.96);
+  border-left:1.5px solid #dde3f5;
+  box-shadow:-4px 0 20px rgba(0,0,80,0.06);
+  display:flex; flex-direction:column;
+  transform: translateX(100%);
+  transition: transform .25s cubic-bezier(.4,0,.2,1);
+}
+#panel.open { transform: translateX(0); }
+
+#panel-header {
+  padding:16px 18px 12px;
+  border-bottom:1px solid #edf0f8;
+  display:flex; justify-content:space-between; align-items:center;
+}
+#panel-title { font-size:.85rem; font-weight:700; color:#1a237e; }
+#panel-close {
+  cursor:pointer; font-size:1.1rem; color:#90a4ae;
+  background:none; border:none; line-height:1;
+}
+#panel-close:hover { color:#c62828; }
+
+#panel-body { padding:16px 18px; overflow-y:auto; flex:1; }
+.info-row {
+  margin-bottom:10px; font-size:.78rem;
+}
+.info-label { color:#90a4ae; text-transform:uppercase; letter-spacing:.07em; font-size:.68rem; }
+.info-value { color:#263238; font-weight:500; margin-top:2px; }
+.node-type-badge {
+  display:inline-block;
+  padding:2px 10px; border-radius:12px;
+  font-size:.72rem; font-weight:700; letter-spacing:.05em;
+  color:#fff; margin-top:3px;
+}
+.conn-list { list-style:none; margin-top:6px; }
+.conn-list li {
+  font-size:.74rem; color:#546e7a; padding:3px 0;
+  border-bottom:1px solid #f0f2fa;
+  display:flex; gap:6px; align-items:center;
+}
+.conn-arrow { color:#b0bec5; }
+.conn-edge-type { font-size:.65rem; color:#90a4ae; }
+
+/* ── Legend ── */
+#legend {
+  position:fixed; left:16px; bottom:16px; z-index:35;
+  background:rgba(255,255,255,0.94);
+  backdrop-filter:blur(8px);
+  border:1.5px solid #dde3f5;
+  border-radius:12px; padding:12px 16px;
+  max-height:55vh; overflow-y:auto;
+  box-shadow:0 4px 20px rgba(0,0,80,0.08);
+}
+#legend h3 {
+  font-size:.65rem; letter-spacing:.1em; text-transform:uppercase;
+  color:#90a4ae; margin-bottom:8px;
+}
+.leg-item {
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:5px; cursor:pointer;
+  opacity:1; transition:opacity .2s;
+}
+.leg-item.dimmed { opacity:.3; }
+.leg-dot {
+  width:10px; height:10px; border-radius:50%; flex-shrink:0;
+  box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+.leg-label { font-size:.72rem; color:#37474f; }
+.leg-count { font-size:.65rem; color:#90a4ae; margin-left:auto; }
+
+/* ── Controls hint ── */
+#hint {
+  position:fixed; left:16px; top:64px; z-index:35;
+  font-size:.67rem; color:#b0bec5; line-height:1.8;
+}
+
+/* ── HTML Labels ── */
+#labels { position:fixed; inset:0; pointer-events:none; z-index:20; }
+.node-label {
+  position:absolute;
+  transform:translate(-50%, 0);
+  font-size:.65rem; font-weight:600;
+  white-space:nowrap;
+  pointer-events:none;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.9), 0 0 8px rgba(255,255,255,0.6);
+}
+
+/* ── Tooltip ── */
+#tooltip {
+  position:fixed; pointer-events:none; z-index:50;
+  background:rgba(26,35,126,0.92); color:#fff;
+  border-radius:8px; padding:7px 14px;
+  font-size:.76rem; line-height:1.5;
+  display:none; max-width:200px;
+  box-shadow:0 4px 16px rgba(0,0,80,.25);
+}
+</style>
+</head>
+<body>
+
+<div id="canvas-wrap"><canvas id="c"></canvas></div>
+<div id="labels"></div>
+
+<!-- Header -->
+<div id="header">
+  <div class="logo">ZEA</div>
+  <div class="repo-name">fastapi</div>
+  <div class="stat-pill">Nodes <b>109</b></div>
+  <div class="stat-pill">Edges <b>108</b></div>
+  <input id="search" type="text" placeholder="Search nodes…"/>
+</div>
+
+<!-- Side panel -->
+<div id="panel">
+  <div id="panel-header">
+    <span id="panel-title">Node Detail</span>
+    <button id="panel-close">✕</button>
+  </div>
+  <div id="panel-body" id="panel-content"></div>
+</div>
+
+<!-- Legend -->
+<div id="legend">
+  <h3>Node Types</h3>
+  <div id="legend-items"></div>
+</div>
+
+<!-- Hint -->
+<div id="hint">
+  Drag · Rotate<br>
+  Scroll · Zoom<br>
+  Click · Inspect
+</div>
+
+<!-- Tooltip -->
+<div id="tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════
+const GRAPH = {
+  "nodes": [
+    {
+      "id": "repo_fastapi",
+      "name": "fastapi",
+      "type": "repository"
+    },
+    {
+      "id": "app_backend_fastapi",
+      "name": "fastapi (Backend)",
+      "type": "backend"
+    },
+    {
+      "id": "api_post_items",
+      "name": "POST /items/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items",
+      "name": "GET /items/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_users",
+      "name": "POST /users/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_sum",
+      "name": "POST /sum",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_timed",
+      "name": "GET /timed",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items_stream",
+      "name": "GET /items/stream",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items_stream_no_async",
+      "name": "GET /items/stream-no-async",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items_stream_no_annotation",
+      "name": "GET /items/stream-no-annotation",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items_stream_no_async_no_annotation",
+      "name": "GET /items/stream-no-async-no-annotation",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items__item_id_",
+      "name": "GET /items/{item_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_put_items__item_id_",
+      "name": "PUT /items/{item_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_login",
+      "name": "POST /login/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_put_items__id_",
+      "name": "PUT /items/{id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_users__user_id__items__item_id_",
+      "name": "GET /users/{user_id}/items/{item_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_invoices",
+      "name": "POST /invoices/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post___callback_url__invoices___request_body_",
+      "name": "POST {$callback_url}/invoices/{$request.body.id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_users",
+      "name": "GET /users/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_elements",
+      "name": "GET /elements/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_send_notification__email_",
+      "name": "POST /send-notification/{email}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_info",
+      "name": "GET /info",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_unicorns__name_",
+      "name": "GET /unicorns/{name}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items_header__item_id_",
+      "name": "GET /items-header/{item_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_users_me",
+      "name": "GET /users/me",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_generate",
+      "name": "GET /generate",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_query_checker",
+      "name": "GET /query-checker/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_files",
+      "name": "POST /files/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_heroes",
+      "name": "POST /heroes/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_heroes",
+      "name": "GET /heroes/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_heroes__hero_id_",
+      "name": "GET /heroes/{hero_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_delete_heroes__hero_id_",
+      "name": "DELETE /heroes/{hero_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_patch_heroes__hero_id_",
+      "name": "PATCH /heroes/{hero_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_docs",
+      "name": "GET /docs",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_redoc",
+      "name": "GET /redoc",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_users__username_",
+      "name": "GET /users/{username}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_patch_items__item_id_",
+      "name": "PATCH /items/{item_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_user",
+      "name": "POST /user/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_keyword_weights",
+      "name": "GET /keyword-weights/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_uploadfiles",
+      "name": "POST /uploadfiles/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_uploadfile",
+      "name": "POST /uploadfile/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_v2",
+      "name": "GET /v2",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_authors__author_id__items",
+      "name": "POST /authors/{author_id}/items/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_authors",
+      "name": "GET /authors/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items_next",
+      "name": "GET /items/next",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_legacy",
+      "name": "GET /legacy/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_story_stream",
+      "name": "GET /story/stream",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_story_stream_no_async",
+      "name": "GET /story/stream-no-async",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_story_stream_no_annotation",
+      "name": "GET /story/stream-no-annotation",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_story_stream_no_async_no_annotation",
+      "name": "GET /story/stream-no-async-no-annotation",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_story_stream_bytes",
+      "name": "GET /story/stream-bytes",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_story_stream_no_async_bytes",
+      "name": "GET /story/stream-no-async-bytes",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_story_stream_no_annotation_bytes",
+      "name": "GET /story/stream-no-annotation-bytes",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_story_stream_no_async_no_annotation_byte",
+      "name": "GET /story/stream-no-async-no-annotation-bytes",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_image_stream",
+      "name": "GET /image/stream",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_image_stream_no_async",
+      "name": "GET /image/stream-no-async",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_image_stream_no_async_yield_from",
+      "name": "GET /image/stream-no-async-yield-from",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_image_stream_no_annotation",
+      "name": "GET /image/stream-no-annotation",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_image_stream_no_async_no_annotation",
+      "name": "GET /image/stream-no-async-no-annotation",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_logs_stream",
+      "name": "GET /logs/stream",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_chat_stream",
+      "name": "POST /chat/stream",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_token",
+      "name": "POST /token",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_users_me",
+      "name": "GET /users/me/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_users_me_items",
+      "name": "GET /users/me/items/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_status",
+      "name": "GET /status/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_put_get_or_create_task__task_id_",
+      "name": "PUT /get-or-create-task/{task_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_predict",
+      "name": "GET /predict",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_data",
+      "name": "POST /data",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_data",
+      "name": "GET /data",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_data_in_out",
+      "name": "POST /data-in-out",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_me",
+      "name": "GET /me",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_pydantic",
+      "name": "GET /pydantic",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_fastapi",
+      "name": "GET /fastapi",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_typer",
+      "name": "GET /typer",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_users__user_id_",
+      "name": "GET /users/{user_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_models__model_name_",
+      "name": "GET /models/{model_name}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_users",
+      "name": "GET /users",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_files__file_path_path_",
+      "name": "GET /files/{file_path:path}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items__id_",
+      "name": "GET /items/{id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_teleport",
+      "name": "GET /teleport",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_portal",
+      "name": "GET /portal",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items__item_id__name",
+      "name": "GET /items/{item_id}/name",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_items__item_id__public",
+      "name": "GET /items/{item_id}/public",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get__item_id_",
+      "name": "GET /{item_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_put__item_id_",
+      "name": "PUT /{item_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_headers",
+      "name": "GET /headers/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_headers_and_object",
+      "name": "GET /headers-and-object/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_cookie",
+      "name": "POST /cookie/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_cookie_and_object",
+      "name": "POST /cookie-and-object/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_index_weights",
+      "name": "POST /index-weights/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_offers",
+      "name": "POST /offers/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_images_multiple",
+      "name": "POST /images/multiple/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_app",
+      "name": "GET /app",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_root_path",
+      "name": "GET root_path",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_delete_items__item_id_",
+      "name": "DELETE /items/{item_id}",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_patch_items",
+      "name": "PATCH /items/",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_fastapi_middleware_astack",
+      "name": "GET fastapi_middleware_astack",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_fastapi_inner_astack",
+      "name": "GET fastapi_inner_astack",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_model",
+      "name": "GET model",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_description",
+      "name": "GET description",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_fastapi_function_astack",
+      "name": "GET fastapi_function_astack",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_post_login",
+      "name": "POST /login",
+      "type": "rest_api"
+    },
+    {
+      "id": "api_get_loc",
+      "name": "GET loc",
+      "type": "rest_api"
+    },
+    {
+      "id": "db_postgres",
+      "name": "PostgreSQL",
+      "type": "database"
+    },
+    {
+      "id": "db_sqlite",
+      "name": "SQLite",
+      "type": "database"
+    },
+    {
+      "id": "evt_invoiceeventreceived",
+      "name": "InvoiceEventReceived",
+      "type": "event"
+    },
+    {
+      "id": "evt_invoiceevent",
+      "name": "InvoiceEvent",
+      "type": "event"
+    },
+    {
+      "id": "evt_serversentevent",
+      "name": "ServerSentEvent",
+      "type": "event"
+    },
+    {
+      "id": "evt_partialgithubevent",
+      "name": "PartialGitHubEvent",
+      "type": "event"
+    }
+  ],
+  "edges": [
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "app_backend_fastapi",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_items",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_users",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_sum",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_timed",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items_stream",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items_stream_no_async",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items_stream_no_annotation",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items_stream_no_async_no_annotation",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items__item_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_put_items__item_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_login",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_put_items__id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_users__user_id__items__item_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_invoices",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post___callback_url__invoices___request_body_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_users",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_elements",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_send_notification__email_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_info",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_unicorns__name_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items_header__item_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_users_me",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_generate",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_query_checker",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_files",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_heroes",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_heroes",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_heroes__hero_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_delete_heroes__hero_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_patch_heroes__hero_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_docs",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_redoc",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_users__username_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_patch_items__item_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_user",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_keyword_weights",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_uploadfiles",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_uploadfile",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_v2",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_authors__author_id__items",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_authors",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items_next",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_legacy",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_story_stream",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_story_stream_no_async",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_story_stream_no_annotation",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_story_stream_no_async_no_annotation",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_story_stream_bytes",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_story_stream_no_async_bytes",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_story_stream_no_annotation_bytes",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_story_stream_no_async_no_annotation_byte",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_image_stream",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_image_stream_no_async",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_image_stream_no_async_yield_from",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_image_stream_no_annotation",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_image_stream_no_async_no_annotation",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_logs_stream",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_chat_stream",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_token",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_users_me",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_users_me_items",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_status",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_put_get_or_create_task__task_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_predict",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_data",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_data",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_data_in_out",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_me",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_pydantic",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_fastapi",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_typer",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_users__user_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_models__model_name_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_users",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_files__file_path_path_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items__id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_teleport",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_portal",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items__item_id__name",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_items__item_id__public",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get__item_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_put__item_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_headers",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_headers_and_object",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_cookie",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_cookie_and_object",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_index_weights",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_offers",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_images_multiple",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_app",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_root_path",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_delete_items__item_id_",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_patch_items",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_fastapi_middleware_astack",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_fastapi_inner_astack",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_model",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_description",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_fastapi_function_astack",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_post_login",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "api_get_loc",
+      "type": "CONTAINS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "db_postgres",
+      "type": "READS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "db_sqlite",
+      "type": "READS"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "evt_invoiceeventreceived",
+      "type": "PUBLISHES"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "evt_invoiceevent",
+      "type": "PUBLISHES"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "evt_serversentevent",
+      "type": "PUBLISHES"
+    },
+    {
+      "source_id": "repo_fastapi",
+      "target_id": "evt_partialgithubevent",
+      "type": "PUBLISHES"
+    }
+  ]
+};
+const NODE_META = {
+  "backend": {
+    "color": "#1565c0",
+    "r": 11
+  },
+  "database": {
+    "color": "#2e7d32",
+    "r": 10
+  },
+  "event": {
+    "color": "#f4511e",
+    "r": 7
+  },
+  "repository": {
+    "color": "#1a237e",
+    "r": 14
+  },
+  "rest_api": {
+    "color": "#7b1fa2",
+    "r": 8
+  }
+};
+const EDGE_COLORS = {
+  "CALLS": "#1565c0",
+  "DEPENDS_ON": "#6a1b9a",
+  "READS": "#2e7d32",
+  "WRITES": "#e65100",
+  "OWNS": "#ad1457",
+  "PUBLISHES": "#f4511e",
+  "CONSUMES": "#ef6c00",
+  "CONTAINS": "#90a4ae",
+  "BELONGS_TO": "#90a4ae",
+  "DEPLOYED_IN": "#607d8b",
+  "IMPORTS": "#b0bec5",
+  "REFERENCES": "#b0bec5",
+  "INVOKES": "#1976d2",
+  "CONNECTS_TO": "#546e7a"
+};
+const DEFAULT_COLOR = '#90a4ae';
+
+function nodeMeta(type) {
+  return NODE_META[type] || { color: DEFAULT_COLOR, r: 8 };
+}
+function edgeColor(type) {
+  return EDGE_COLORS[type] || '#b0bec5';
+}
+
+// ═══════════════════════════════════════════════════════
+//  THREE.JS SETUP
+// ═══════════════════════════════════════════════════════
+const canvas = document.getElementById('c');
+const wrap   = document.getElementById('canvas-wrap');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0xf0f4ff, 1);
+
+function resize() {
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  renderer.setSize(W, H, false);
+  camera.aspect = W / H;
+  camera.updateProjectionMatrix();
+}
+
+const scene  = new THREE.Scene();
+scene.background = new THREE.Color(0xf0f4ff);
+
+const camera = new THREE.PerspectiveCamera(55, 1, 0.5, 8000);
+
+// Lights — bright ambient for light mode
+scene.add(new THREE.AmbientLight(0xffffff, 1.8));
+const dLight = new THREE.DirectionalLight(0xffffff, 0.6);
+dLight.position.set(1, 2, 3);
+scene.add(dLight);
+
+// ═══════════════════════════════════════════════════════
+//  ORBIT CONTROLS (manual)
+// ═══════════════════════════════════════════════════════
+const orb = { theta: 0.4, phi: 1.1, r: 500, dragging: false, lx: 0, ly: 0 };
+
+function applyOrbit() {
+  orb.phi = Math.max(0.15, Math.min(Math.PI - 0.15, orb.phi));
+  camera.position.set(
+    orb.r * Math.sin(orb.phi) * Math.sin(orb.theta),
+    orb.r * Math.cos(orb.phi),
+    orb.r * Math.sin(orb.phi) * Math.cos(orb.theta)
+  );
+  camera.lookAt(0, 0, 0);
+}
+
+canvas.addEventListener('mousedown', e => {
+  if (e.button !== 0) return;
+  orb.dragging = true; orb.lx = e.clientX; orb.ly = e.clientY;
+});
+window.addEventListener('mouseup',   () => { orb.dragging = false; });
+window.addEventListener('mousemove', e => {
+  if (!orb.dragging) return;
+  orb.theta -= (e.clientX - orb.lx) * 0.006;
+  orb.phi   -= (e.clientY - orb.ly) * 0.006;
+  orb.lx = e.clientX; orb.ly = e.clientY;
+  applyOrbit();
+});
+canvas.addEventListener('wheel', e => {
+  orb.r = Math.max(30, Math.min(4000, orb.r + e.deltaY * 0.4));
+  applyOrbit();
+}, { passive: true });
+
+// ═══════════════════════════════════════════════════════
+//  GRAPH OBJECTS
+// ═══════════════════════════════════════════════════════
+const N = GRAPH.nodes.length;
+const SPREAD = Math.max(120, Math.cbrt(N) * 55);
+
+// Fibonacci sphere initial placement
+function fibPos(i, n, rad) {
+  if (n <= 1) return { x:0, y:0, z:0 };
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  const y  = 1 - (i / (n - 1)) * 2;
+  const r2 = Math.sqrt(Math.max(0, 1 - y*y));
+  return {
+    x: Math.cos(golden * i) * r2 * rad,
+    y: y * rad,
+    z: Math.sin(golden * i) * r2 * rad,
+  };
+}
+
+// Physics state
+const pos = GRAPH.nodes.map((_, i) => {
+  const p = fibPos(i, N, SPREAD);
+  return { x: p.x, y: p.y, z: p.z, vx:0, vy:0, vz:0 };
+});
+
+// id → index
+const idx = {};
+GRAPH.nodes.forEach((n, i) => { idx[n.id] = i; });
+
+// Meshes
+const meshes = [];
+const geomCache = {};
+
+GRAPH.nodes.forEach((node, i) => {
+  const m  = nodeMeta(node.type);
+  const r  = m.r;
+  if (!geomCache[r]) geomCache[r] = new THREE.SphereGeometry(r, 32, 24);
+  const geo = geomCache[r];
+  const colorHex = parseInt(m.color.replace('#',''), 16);
+  const mat = new THREE.MeshLambertMaterial({
+    color:   colorHex,
+    emissive: colorHex,
+    emissiveIntensity: 0.12,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.userData = { id: node.id, name: node.name, type: node.type, index: i, meta: m };
+  scene.add(mesh);
+  meshes.push(mesh);
+});
+
+// Edges — one LineSegments per edge type for distinct colors
+const edgePairs = [];   // { si, ti, type }
+GRAPH.edges.forEach(e => {
+  const si = idx[e.source_id], ti = idx[e.target_id];
+  if (si === undefined || ti === undefined) return;
+  edgePairs.push({ si, ti, type: e.type });
+});
+
+// Build edge geometry (updated each frame)
+const edgeGeoMap = {};  // type → { geo, buf }
+const edgeTypeLines = {};
+
+// Group edges by type
+const edgesByType = {};
+edgePairs.forEach(ep => {
+  (edgesByType[ep.type] = edgesByType[ep.type] || []).push(ep);
+});
+
+// Create one LineSegments per type
+const allEdgeLines = [];
+Object.keys(edgesByType).forEach(type => {
+  const pairs  = edgesByType[type];
+  const buf    = new Float32Array(pairs.length * 6);  // 2 verts × 3 floats
+  const geo    = new THREE.BufferGeometry();
+  const attr   = new THREE.BufferAttribute(buf, 3);
+  attr.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute('position', attr);
+  const col = parseInt(edgeColor(type).replace('#',''), 16);
+  const mat = new THREE.LineBasicMaterial({
+    color: col, transparent: true, opacity: 0.5, linewidth: 1
+  });
+  const line = new THREE.LineSegments(geo, mat);
+  scene.add(line);
+  allEdgeLines.push({ pairs, attr, line });
+});
+
+// ═══════════════════════════════════════════════════════
+//  HTML LABELS
+// ═══════════════════════════════════════════════════════
+const labelsDiv = document.getElementById('labels');
+const labelEls  = GRAPH.nodes.map((node, i) => {
+  const m   = nodeMeta(node.type);
+  const el  = document.createElement('div');
+  el.className  = 'node-label';
+  el.textContent = node.name.length > 22 ? node.name.slice(0,20)+'…' : node.name;
+  el.style.color = m.color;
+  labelsDiv.appendChild(el);
+  return el;
+});
+
+// Project 3D → 2D
+const _v3 = new THREE.Vector3();
+function project(x, y, z) {
+  _v3.set(x, y, z).project(camera);
+  return {
+    sx: ( _v3.x * 0.5 + 0.5) * wrap.clientWidth,
+    sy: (-_v3.y * 0.5 + 0.5) * wrap.clientHeight,
+    behind: _v3.z > 1,
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+//  FORCE SIMULATION
+// ═══════════════════════════════════════════════════════
+let simStep = 0;
+const MAX_SIM = 400;
+const REPEL   = 1200;
+const SPRING  = 0.022;
+const REST    = SPREAD * 0.6;
+const DAMP    = 0.80;
+const PULL    = 0.006;
+
+function stepSim() {
+  const n  = pos.length;
+  const fx = new Float64Array(n);
+  const fy = new Float64Array(n);
+  const fz = new Float64Array(n);
+
+  // Repulsion
+  for (let a = 0; a < n; a++) {
+    for (let b = a+1; b < n; b++) {
+      const dx = pos[b].x-pos[a].x, dy = pos[b].y-pos[a].y, dz = pos[b].z-pos[a].z;
+      const d2 = dx*dx+dy*dy+dz*dz+0.01;
+      const d  = Math.sqrt(d2);
+      const f  = REPEL / d2;
+      const ux = dx/d, uy = dy/d, uz = dz/d;
+      fx[a]-=ux*f; fy[a]-=uy*f; fz[a]-=uz*f;
+      fx[b]+=ux*f; fy[b]+=uy*f; fz[b]+=uz*f;
+    }
+  }
+
+  // Springs
+  edgePairs.forEach(({ si, ti }) => {
+    const dx = pos[ti].x-pos[si].x, dy = pos[ti].y-pos[si].y, dz = pos[ti].z-pos[si].z;
+    const d  = Math.sqrt(dx*dx+dy*dy+dz*dz)+0.01;
+    const f  = SPRING*(d-REST);
+    const ux = dx/d, uy = dy/d, uz = dz/d;
+    fx[si]+=ux*f; fy[si]+=uy*f; fz[si]+=uz*f;
+    fx[ti]-=ux*f; fy[ti]-=uy*f; fz[ti]-=uz*f;
+  });
+
+  // Integrate
+  for (let i = 0; i < n; i++) {
+    fx[i] -= pos[i].x * PULL;
+    fy[i] -= pos[i].y * PULL;
+    fz[i] -= pos[i].z * PULL;
+    pos[i].vx = (pos[i].vx+fx[i])*DAMP;
+    pos[i].vy = (pos[i].vy+fy[i])*DAMP;
+    pos[i].vz = (pos[i].vz+fz[i])*DAMP;
+    pos[i].x += pos[i].vx;
+    pos[i].y += pos[i].vy;
+    pos[i].z += pos[i].vz;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  RAYCASTING / HOVER / CLICK
+// ═══════════════════════════════════════════════════════
+const ray     = new THREE.Raycaster();
+ray.params.Line = { threshold: 4 };
+const mpos    = new THREE.Vector2(-9999,-9999);
+const tooltip = document.getElementById('tooltip');
+let hoveredMesh = null;
+let selectedId  = null;
+
+window.addEventListener('mousemove', e => {
+  mpos.x =  (e.clientX / wrap.clientWidth)  * 2 - 1;
+  mpos.y = -(e.clientY / wrap.clientHeight) * 2 + 1;
+  tooltip.style.left = (e.clientX+14)+'px';
+  tooltip.style.top  = (e.clientY-10)+'px';
+});
+
+canvas.addEventListener('click', e => {
+  ray.setFromCamera(mpos, camera);
+  const hits = ray.intersectObjects(meshes);
+  if (hits.length) openPanel(hits[0].object.userData);
+  else closePanel();
+});
+
+function openPanel(ud) {
+  selectedId = ud.id;
+  const nodeEdges = edgePairs.filter(ep =>
+    GRAPH.nodes[ep.si].id === ud.id || GRAPH.nodes[ep.ti].id === ud.id
+  );
+  const m = ud.meta || nodeMeta(ud.type);
+  document.getElementById('panel-title').textContent = ud.name;
+
+  const conns = nodeEdges.map(ep => {
+    const other = ep.si === ud.index
+      ? GRAPH.nodes[ep.ti]
+      : GRAPH.nodes[ep.si];
+    const dir = ep.si === ud.index ? '→' : '←';
+    return `<li><span class="conn-arrow">${dir}</span>
+      ${(other && other.name) || '?'}
+      <span class="conn-edge-type">${ep.type}</span></li>`;
+  }).join('');
+
+  document.getElementById('panel-body').innerHTML = `
+    <div class="info-row">
+      <div class="info-label">Type</div>
+      <span class="node-type-badge" style="background:${m.color}">${ud.type}</span>
+    </div>
+    <div class="info-row">
+      <div class="info-label">ID</div>
+      <div class="info-value" style="font-family:monospace;font-size:.72rem">${ud.id}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Connections (${nodeEdges.length})</div>
+      <ul class="conn-list">${conns || '<li style="color:#b0bec5">None detected</li>'}</ul>
+    </div>
+  `;
+  document.getElementById('panel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  selectedId = null;
+}
+document.getElementById('panel-close').addEventListener('click', closePanel);
+
+// ═══════════════════════════════════════════════════════
+//  LEGEND
+// ═══════════════════════════════════════════════════════
+const presentTypes = [...new Set(GRAPH.nodes.map(n => n.type))].sort();
+const typeCounts   = {};
+GRAPH.nodes.forEach(n => { typeCounts[n.type] = (typeCounts[n.type]||0)+1; });
+const hiddenTypes  = new Set();
+const legendItems  = document.getElementById('legend-items');
+
+presentTypes.forEach(type => {
+  const m   = nodeMeta(type);
+  const row = document.createElement('div');
+  row.className = 'leg-item';
+  row.innerHTML = `
+    <div class="leg-dot" style="background:${m.color}"></div>
+    <span class="leg-label">${type}</span>
+    <span class="leg-count">${typeCounts[type]}</span>
+  `;
+  row.addEventListener('click', () => {
+    if (hiddenTypes.has(type)) {
+      hiddenTypes.delete(type);
+      row.classList.remove('dimmed');
+    } else {
+      hiddenTypes.add(type);
+      row.classList.add('dimmed');
+    }
+    updateVisibility();
+  });
+  legendItems.appendChild(row);
+});
+
+function updateVisibility() {
+  GRAPH.nodes.forEach((node, i) => {
+    const vis = !hiddenTypes.has(node.type);
+    meshes[i].visible = vis;
+    labelEls[i].style.display = vis ? '' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  SEARCH
+// ═══════════════════════════════════════════════════════
+document.getElementById('search').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  GRAPH.nodes.forEach((node, i) => {
+    const match = !q || node.name.toLowerCase().includes(q) || node.type.includes(q);
+    meshes[i].material.emissiveIntensity = match ? 0.12 : 0.0;
+    meshes[i].material.opacity = match ? 1.0 : 0.25;
+    meshes[i].material.transparent = !match;
+    labelEls[i].style.opacity = match ? '1' : '0.15';
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+//  ANIMATION LOOP
+// ═══════════════════════════════════════════════════════
+let t = 0;
+resize();
+applyOrbit();
+
+// Adjust camera distance to fit the graph
+orb.r = Math.max(80, SPREAD * 2.8);
+applyOrbit();
+
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.016;
+
+  // Simulation
+  if (simStep < MAX_SIM || simStep % 4 === 0) stepSim();
+  simStep++;
+
+  // Sync mesh positions
+  for (let i = 0; i < meshes.length; i++) {
+    const p   = pos[i];
+    const bob = Math.sin(t * 0.6 + i * 0.9) * 1.0;
+    meshes[i].position.set(p.x, p.y + bob, p.z);
+  }
+
+  // Update edge geometries
+  allEdgeLines.forEach(({ pairs, attr }) => {
+    let off = 0;
+    pairs.forEach(({ si, ti }) => {
+      const sp = meshes[si].position;
+      const tp = meshes[ti].position;
+      attr.array[off++]=sp.x; attr.array[off++]=sp.y; attr.array[off++]=sp.z;
+      attr.array[off++]=tp.x; attr.array[off++]=tp.y; attr.array[off++]=tp.z;
+    });
+    attr.needsUpdate = true;
+  });
+
+  // Update HTML labels
+  const W = wrap.clientWidth, H = wrap.clientHeight;
+  for (let i = 0; i < labelEls.length; i++) {
+    const m  = nodeMeta(GRAPH.nodes[i].type);
+    const p  = pos[i];
+    const pr = project(p.x, p.y + m.r * 1.6, p.z);
+    if (pr.behind || !meshes[i].visible) {
+      labelEls[i].style.display = 'none';
+    } else {
+      labelEls[i].style.display = '';
+      labelEls[i].style.left = pr.sx + 'px';
+      labelEls[i].style.top  = pr.sy + 'px';
+    }
+  }
+
+  // Hover tooltip
+  ray.setFromCamera(mpos, camera);
+  const hits = ray.intersectObjects(meshes.filter(m => m.visible));
+  if (hits.length) {
+    const ud = hits[0].object.userData;
+    tooltip.innerHTML = `<b>${ud.name}</b><br><span style="opacity:.7;font-size:.7rem">${ud.type}</span>`;
+    tooltip.style.display = 'block';
+    canvas.style.cursor = 'pointer';
+  } else {
+    tooltip.style.display = 'none';
+    canvas.style.cursor = 'grab';
+  }
+
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => { resize(); applyOrbit(); });
+canvas.style.cursor = 'grab';
+animate();
+</script>
+</body>
+</html>

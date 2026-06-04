@@ -1,0 +1,28 @@
+{
+  "repository_path": "/sessions/confident-ecstatic-sagan/mnt/ZEA (Zeal's Engine for Architectures)/zea",
+  "repository_name": "zea",
+  "languages": [
+    {
+      "language": "python",
+      "file_count": 37,
+      "extensions": [
+        ".py"
+      ]
+    }
+  ],
+  "primary_language": "python",
+  "frameworks": [],
+  "package_managers": [
+    {
+      "manager": "pip",
+      "manifest_file": "pyproject.toml",
+      "dependencies": []
+    }
+  ],
+  "infrastructure": [],
+  "documentation": [],
+  "total_files": 38,
+  "total_directories": 24,
+  "has_tests": true,
+  "has_ci": false
+}

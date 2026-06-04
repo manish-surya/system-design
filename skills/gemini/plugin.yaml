@@ -1,0 +1,126 @@
+schema_version: "1.0"
+
+name: zea
+display_name: "ZEA — Architecture Intelligence"
+description: >
+  ZEA (Zealous Engine for Architectures) scans any software repository and
+  produces a structured Architecture Knowledge Graph (AKG) with every service,
+  API, database, event stream, and infrastructure component. All inferences
+  cite evidence (file paths, patterns, confidence scores). Outputs include
+  structured JSON and a standalone interactive 3D HTML visualization.
+
+version: "0.1.0"
+author: "Zealous Engineering"
+license: MIT
+homepage: https://github.com/zealous-engineering/zea
+
+installation:
+  method: pip
+  command: pip install zea
+
+cli:
+  executable: zea
+  commands:
+    - name: analyze
+      description: >
+        Full pipeline: repository inventory, architecture graph construction,
+        and interactive HTML visualization.
+      usage: "zea analyze <repo_path> [--output <dir>] [--verbose]"
+      example: "zea analyze . --output .zea"
+
+    - name: graph
+      description: Build the Architecture Knowledge Graph only (skips HTML rendering).
+      usage: "zea graph <repo_path> [--output <dir>]"
+      example: "zea graph . --output .zea"
+
+    - name: report
+      description: Generate a human-readable Markdown architecture report.
+      usage: "zea report <repo_path> [--output <dir>]"
+      example: "zea report . --output .zea"
+
+outputs:
+  - filename: repository_inventory.json
+    default_path: .zea/repository_inventory.json
+    description: >
+      Detected languages, frameworks, package managers, and documentation.
+    format: json
+
+  - filename: architecture_graph.json
+    default_path: .zea/architecture_graph.json
+    description: >
+      Full Architecture Knowledge Graph. Top-level keys are `nodes` and `edges`.
+      Every node has: id, type, name, metadata, evidence[].
+      Every edge has: source, target, type, evidence[].
+    format: json
+
+  - filename: architecture.html
+    default_path: .zea/architecture.html
+    description: >
+      Standalone interactive 3D visualization built with Three.js.
+      No server required — open directly in any modern browser.
+    format: html
+
+node_types:
+  - Application: [Frontend, Backend, Monolith, Gateway]
+  - Service: [Microservice, Worker, APIService]
+  - API: [REST, GraphQL, gRPC, Webhook]
+  - Database: [PostgreSQL, MySQL, MongoDB, Redis, DynamoDB, Elasticsearch]
+  - Messaging: [Kafka, RabbitMQ, SQS, SNS]
+  - Event: [DomainEvent]
+  - Domain: [BusinessDomain]
+  - Infrastructure: [Cluster, Namespace, Pod, LoadBalancer]
+  - External: [ThirdPartyIntegration]
+
+edge_types:
+  dependency: [DEPENDS_ON, IMPORTS, REFERENCES]
+  communication: [CALLS, INVOKES, CONNECTS_TO]
+  data: [READS, WRITES, OWNS]
+  events: [PUBLISHES, CONSUMES]
+  organization: [CONTAINS, BELONGS_TO, OWNED_BY]
+
+capabilities:
+  languages:
+    - Python
+    - TypeScript
+    - JavaScript
+    - Go
+    - Java
+    - Rust
+    - Ruby
+    - "C#"
+    - PHP
+
+  frameworks:
+    - FastAPI
+    - Django
+    - Flask
+    - Express
+    - NestJS
+    - "Spring Boot"
+    - Rails
+    - Laravel
+
+  infrastructure:
+    - Docker
+    - Kubernetes
+    - Terraform
+    - Helm
+    - "GitHub Actions"
+    - "GitLab CI"
+
+  external_integrations:
+    - Stripe
+    - Salesforce
+    - Auth0
+    - Twilio
+    - SendGrid
+    - Datadog
+
+suggested_prompts:
+  - "Analyze the architecture of this repository and summarize the services"
+  - "What databases does the checkout service use?"
+  - "Which services publish domain events and which consume them?"
+  - "Are there any services with no inbound dependencies?"
+  - "What external integrations does this codebase rely on?"
+  - "Trace the request path from the API gateway to the database"
+  - "Which services would be impacted if the payments database went offline?"

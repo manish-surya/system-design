@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zea"
+version = "0.1.0"
+description = "ZEA - Zealous Engine for Architectures: Architecture Intelligence Engine"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+keywords = ["architecture", "knowledge-graph", "code-analysis", "AI", "developer-tools"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+dependencies = [
+    "typer>=0.12",
+    "rich>=13",
+    "pydantic>=2.0",
+    "networkx>=3.0",
+    "tree-sitter>=0.23",
+]
+
+[project.urls]
+Homepage = "https://github.com/zealous-engineering/zea"
+Repository = "https://github.com/zealous-engineering/zea"
+Documentation = "https://github.com/zealous-engineering/zea#readme"
+"Bug Tracker" = "https://github.com/zealous-engineering/zea/issues"
+
+[project.scripts]
+zea = "zea.cli.main:app"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["zea*"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
