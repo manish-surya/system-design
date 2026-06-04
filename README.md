@@ -1,4 +1,4 @@
-# ZEA — Zealous Engine for Architectures
+# ZEA — Zeal's Engine for Architectures
 
 **Turn any repository into a living 3D architecture graph**
 
