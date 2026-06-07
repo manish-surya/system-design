@@ -71,11 +71,11 @@ def run_zea(repo_path: Path) -> tuple[dict[str, Any] | None, dict[str, Any] | No
     Returns (inventory_dict, graph_dict) or (None, None) on failure.
     """
     try:
-        from zea.core.config import ZEAConfig
-        from zea.discovery.scanner import scan_repository
-        from zea.graph.builder import AKGBuilder
-        from zea.graph.serializer import save_graph
-        from zea.inference.engine import InferenceEngine
+        from system_design.core.config import ZEAConfig
+        from system_design.discovery.scanner import scan_repository
+        from system_design.graph.builder import AKGBuilder
+        from system_design.graph.serializer import save_graph
+        from system_design.inference.engine import InferenceEngine
 
         config = ZEAConfig()
         inventory = scan_repository(repo_path, config)

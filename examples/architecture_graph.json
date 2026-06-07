@@ -4,7 +4,7 @@
   "nodes": [
     {
       "id": "repo_zea",
-      "name": "zea",
+      "name": "system-design",
       "type": "repository",
       "language": "python",
       "framework": null,

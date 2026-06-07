@@ -3,10 +3,10 @@
 [![PyPI version](https://img.shields.io/pypi/v/zea?color=blue&label=PyPI)](https://pypi.org/project/zea/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![CI](https://github.com/zealous-engineering/zea/actions/workflows/ci.yml/badge.svg)](https://github.com/zealous-engineering/zea/actions)
-[![Stars](https://img.shields.io/github/stars/zealous-engineering/zea?style=social)](https://github.com/zealous-engineering/zea)
+[![CI](https://github.com/manish-surya/system-design/actions/workflows/ci.yml/badge.svg)](https://github.com/manish-surya/system-design/actions)
+[![Stars](https://img.shields.io/github/stars/zealous-engineering/zea?style=social)](https://github.com/manish-surya/system-design)
 
-**ZEA** (Zealous Engine for Architectures) is an Architecture Intelligence Engine. Point it at any software repository and it produces a structured **Architecture Knowledge Graph (AKG)** — a machine-readable, visually explorable map of every service, API, database, event stream, and infrastructure component in the codebase.
+**ZEA** (system-design) is an Architecture Intelligence Engine. Point it at any software repository and it produces a structured **Architecture Knowledge Graph (AKG)** — a machine-readable, visually explorable map of every service, API, database, event stream, and infrastructure component in the codebase.
 
 > The AKG is the product. Reports, visualizations, and AI integrations are derived from it.
 
@@ -16,10 +16,10 @@
 
 ```bash
 # 1. Install
-pip install zea
+pip install system-design
 
 # 2. Analyze any repository
-zea analyze /path/to/your/repo
+system-design analyze /path/to/your/repo
 
 # 3. Open the interactive 3D visualization
 open .zea/architecture.html
@@ -29,7 +29,7 @@ That's it. ZEA walks the repository, infers the architecture, and writes three o
 
 ---
 
-## What ZEA Detects
+## What system-design Detects
 
 | Category | Examples |
 |----------|---------|
@@ -61,19 +61,19 @@ All outputs are written to `.zea/` in the repository root by default. Pass `--ou
 
 ```bash
 # Full analysis (inventory + graph + visualization)
-zea analyze /path/to/repo
+system-design analyze /path/to/repo
 
 # Graph only (skip HTML rendering)
-zea graph /path/to/repo
+system-design graph /path/to/repo
 
 # Generate a human-readable architecture report
-zea report /path/to/repo
+system-design report /path/to/repo
 
 # Custom output directory
-zea analyze /path/to/repo --output /tmp/my-analysis
+system-design analyze /path/to/repo --output /tmp/my-analysis
 
 # Verbose mode
-zea analyze /path/to/repo --verbose
+system-design analyze /path/to/repo --verbose
 ```
 
 ---
@@ -168,7 +168,7 @@ Install the ZEA skill for Claude Code:
 
 ```bash
 # Run ZEA, then ask Claude Code questions about the graph
-zea analyze . --output .zea
+system-design analyze . --output .zea
 ```
 
 Then in Claude Code: *"Read `.zea/architecture_graph.json` and tell me what databases the Order Service uses."*

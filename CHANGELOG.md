@@ -3,7 +3,7 @@
 ## [0.1.0] — 2026-06-03
 
 ### Added
-- **Milestone 0**: Typer-based CLI — `zea analyze`, `zea ai-analyze`, `zea visualize`, `zea version`
+- **Milestone 0**: Typer-based CLI — `system-design analyze`, `system-design ai-analyze`, `system-design visualize`, `system-design version`
 - **Milestone 1**: Repository Discovery — language, framework, package manager, infrastructure, documentation detection
 - **Milestone 2**: Architecture Knowledge Graph — NodeType/EdgeType taxonomy, Pydantic schema, NetworkX builder, JSON serializer
 - **Milestone 3**: Architecture Inference — service detector, API route detector, database detector, event/messaging detector, inter-service CALLS edge detector

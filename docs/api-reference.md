@@ -2,11 +2,11 @@
 
 ## CLI
 
-### `zea analyze <repo>`
+### `system-design analyze <repo>`
 Static repository scan.
 
 ```bash
-zea analyze /path/to/repo \
+system-design analyze /path/to/repo \
   --output .zea \       # output dir (default: .zea)
   --verbose \           # debug logging
   --no-inference        # skip inference layer
@@ -14,11 +14,11 @@ zea analyze /path/to/repo \
 
 Outputs: `repository_inventory.json`, `architecture_graph.json`
 
-### `zea ai-analyze <repo>`
+### `system-design ai-analyze <repo>`
 Full AI-powered pipeline.
 
 ```bash
-zea ai-analyze /path/to/repo \
+system-design ai-analyze /path/to/repo \
   --output .zea \
   --model claude-opus-4-6 \
   --verbose
@@ -28,11 +28,11 @@ Requires `ANTHROPIC_API_KEY`. Falls back to static if not set.
 
 Outputs: all of above + `architecture.json`, `architecture.md`, `service-map.json`, `domain-map.json`, `architecture.html`
 
-### `zea visualize <graph.json>`
+### `system-design visualize <graph.json>`
 Render 3D HTML from an existing graph.
 
 ```bash
-zea visualize .zea/architecture_graph.json \
+system-design visualize .zea/architecture_graph.json \
   --output architecture.html
 ```
 

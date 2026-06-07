@@ -1,38 +1,38 @@
 {
   "schema_version": "1.0",
-  "name": "zea",
+  "name": "system-design",
   "display_name": "ZEA — Architecture Intelligence",
   "description": "Scans a software repository and produces an Architecture Knowledge Graph (AKG) with every service, API, database, event stream, and infrastructure component. Outputs structured JSON and a standalone 3D HTML visualization.",
   "version": "0.1.0",
   "author": "Zealous Engineering",
   "license": "MIT",
-  "homepage": "https://github.com/zealous-engineering/zea",
+  "homepage": "https://github.com/manish-surya/system-design",
 
   "installation": {
     "method": "pip",
-    "command": "pip install zea"
+    "command": "pip install system-design"
   },
 
   "cli": {
-    "executable": "zea",
+    "executable": "system-design",
     "commands": [
       {
         "name": "analyze",
         "description": "Full analysis: repository inventory, architecture graph, and HTML visualization",
-        "usage": "zea analyze <repo_path> [--output <dir>] [--verbose]",
-        "example": "zea analyze . --output .zea"
+        "usage": "system-design analyze <repo_path> [--output <dir>] [--verbose]",
+        "example": "system-design analyze . --output .zea"
       },
       {
         "name": "graph",
         "description": "Build the Architecture Knowledge Graph only (no HTML)",
-        "usage": "zea graph <repo_path> [--output <dir>]",
-        "example": "zea graph . --output .zea"
+        "usage": "system-design graph <repo_path> [--output <dir>]",
+        "example": "system-design graph . --output .zea"
       },
       {
         "name": "report",
         "description": "Generate a human-readable Markdown architecture report",
-        "usage": "zea report <repo_path> [--output <dir>]",
-        "example": "zea report . --output .zea"
+        "usage": "system-design report <repo_path> [--output <dir>]",
+        "example": "system-design report . --output .zea"
       }
     ]
   },

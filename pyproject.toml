@@ -3,13 +3,13 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "zea"
+name = "system-design"
 version = "0.1.0"
-description = "ZEA - Zealous Engine for Architectures: Architecture Intelligence Engine"
+description = "system-design — Architecture Intelligence Engine: turn any repo into a 3D architecture graph"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
-keywords = ["architecture", "knowledge-graph", "code-analysis", "AI", "developer-tools"]
+keywords = ["architecture", "system-design", "knowledge-graph", "code-analysis", "AI", "developer-tools"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
@@ -31,13 +31,13 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/zealous-engineering/zea"
-Repository = "https://github.com/zealous-engineering/zea"
-Documentation = "https://github.com/zealous-engineering/zea#readme"
-"Bug Tracker" = "https://github.com/zealous-engineering/zea/issues"
+Homepage = "https://github.com/manish-surya/system-design"
+Repository = "https://github.com/manish-surya/system-design"
+Documentation = "https://github.com/manish-surya/system-design#readme"
+"Bug Tracker" = "https://github.com/manish-surya/system-design/issues"
 
 [project.scripts]
-zea = "zea.cli.main:app"
+system-design = "system_design.cli.main:app"
 
 [project.optional-dependencies]
 dev = [
@@ -49,7 +49,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["zea*"]
+include = ["system_design*"]
 
 [tool.ruff]
 target-version = "py312"

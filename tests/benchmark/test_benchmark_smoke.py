@@ -100,10 +100,10 @@ class TestSmokeZEAOnFakeRepo:
     @pytest.fixture(scope="class")
     def inventory_and_graph(self, fake_repo: Path):
         """Run ZEA discovery + inference, return (inventory_dict, graph_dict)."""
-        from zea.core.config import ZEAConfig
-        from zea.discovery.scanner import scan_repository
-        from zea.graph.builder import AKGBuilder
-        from zea.inference.engine import InferenceEngine
+        from system_design.core.config import ZEAConfig
+        from system_design.discovery.scanner import scan_repository
+        from system_design.graph.builder import AKGBuilder
+        from system_design.inference.engine import InferenceEngine
 
         config = ZEAConfig()
         inventory = scan_repository(fake_repo, config)

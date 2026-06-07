@@ -3,12 +3,12 @@
 ## Installation
 
 ```bash
-pip install zea
+pip install system-design
 ```
 
 For AI-powered analysis:
 ```bash
-pip install zea anthropic
+pip install system-design anthropic
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
@@ -19,14 +19,14 @@ export ANTHROPIC_API_KEY=sk-ant-...
 cd /path/to/your/project
 
 # 2. Run ZEA
-zea analyze .
+system-design analyze .
 
 # 3. View results
 cat .zea/repository_inventory.json
 cat .zea/architecture_graph.json
 
 # 4. Generate 3D visualization
-zea visualize .zea/architecture_graph.json
+system-design visualize .zea/architecture_graph.json
 open .zea/architecture.html
 ```
 
@@ -34,7 +34,7 @@ open .zea/architecture.html
 
 ```bash
 export ANTHROPIC_API_KEY=your_key
-zea ai-analyze .
+system-design ai-analyze .
 open .zea/architecture.html
 ```
 
@@ -58,8 +58,8 @@ This runs the full pipeline:
 Copy the skill file into your project:
 
 ```bash
-mkdir -p .claude/skills/zea
-cp /path/to/zea/skills/claude-code/SKILL.md .claude/skills/zea/SKILL.md
+mkdir -p .claude/skills/system-design
+cp /path/to/zea/skills/claude-code/SKILL.md .claude/skills/system-design/SKILL.md
 ```
 
 Then in Claude Code, type:

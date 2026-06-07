@@ -1,6 +1,6 @@
 # ZEA — Architecture Intelligence Skill for Claude Code
 
-ZEA transforms any repository into a living 3D architecture graph and system design visualization.
+system-design transforms any repository into a living 3D architecture graph and system design visualization.
 Claude uses ZEA to answer architectural questions, generate system designs, and understand codebases at the service/domain level — not just file-by-file.
 
 ---
@@ -8,9 +8,9 @@ Claude uses ZEA to answer architectural questions, generate system designs, and 
 ## Installation
 
 ```bash
-pip install zea
+pip install system-design
 # For AI-powered analysis (recommended):
-pip install zea anthropic
+pip install system-design anthropic
 export ANTHROPIC_API_KEY=your_key_here
 ```
 
@@ -23,7 +23,7 @@ Generate a complete 3D interactive system design for the current repository.
 
 **What Claude should do:**
 ```bash
-zea ai-analyze . --output .zea
+system-design ai-analyze . --output .zea
 ```
 Then open `.zea/architecture.html`.
 
@@ -50,7 +50,7 @@ Read `.zea/architecture.json` and tell the user:
 Show all services and their dependencies.
 
 ```bash
-zea analyze . --output .zea
+system-design analyze . --output .zea
 ```
 Read `.zea/architecture_graph.json`. Filter nodes by type: service, backend, frontend, gateway.
 Report names, languages, frameworks, and connections.
@@ -61,7 +61,7 @@ Report names, languages, frameworks, and connections.
 Trace data flow: User → API → Service → Database.
 
 ```bash
-zea analyze . --output .zea
+system-design analyze . --output .zea
 ```
 Read `.zea/architecture_graph.json`. Follow CALLS edges from frontend → gateway → service → database.
 Present as a numbered flow diagram.
@@ -72,7 +72,7 @@ Present as a numbered flow diagram.
 Identify business domains.
 
 ```bash
-zea ai-analyze . --output .zea
+system-design ai-analyze . --output .zea
 ```
 Read `.zea/domain-map.json`. Group services by domain. Explain each domain's responsibility.
 
@@ -82,7 +82,7 @@ Read `.zea/domain-map.json`. Group services by domain. Explain each domain's res
 What breaks if I change this component?
 
 ```bash
-zea analyze . --output .zea
+system-design analyze . --output .zea
 ```
 Read `.zea/architecture_graph.json`. Find all nodes with CALLS/READS/DEPENDS_ON/CONSUMES edges TO the named component. List by risk level.
 
@@ -92,7 +92,7 @@ Read `.zea/architecture_graph.json`. Find all nodes with CALLS/READS/DEPENDS_ON/
 Review for coupling issues and anti-patterns.
 
 ```bash
-zea ai-analyze . --output .zea
+system-design ai-analyze . --output .zea
 ```
 Analyze `.zea/architecture.json` for: high coupling, missing boundaries, circular dependencies, god services.
 
@@ -142,6 +142,6 @@ Analyze `.zea/architecture.json` for: high coupling, missing boundaries, circula
 ## Static Mode (no API key)
 
 ```bash
-zea analyze . --output .zea
-zea visualize .zea/architecture_graph.json --output .zea/architecture.html
+system-design analyze . --output .zea
+system-design visualize .zea/architecture_graph.json --output .zea/architecture.html
 ```

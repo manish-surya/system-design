@@ -1,4 +1,4 @@
-# ZEA — Zeal's Engine for Architectures
+# system-design — Architecture Intelligence Engine
 
 **Turn any repository into a living 3D architecture graph**
 
@@ -8,9 +8,9 @@
 
 ---
 
-## What is ZEA?
+## What is system-design?
 
-ZEA is an **Architecture Intelligence Engine**. Point it at any software repository and it produces:
+system-design is an **Architecture Intelligence Engine**. Point it at any software repository and it produces:
 
 - **Architecture Knowledge Graph** — services, APIs, databases, events, infrastructure as a connected graph
 - **3D Interactive System Design** — a Three.js scene with 3D components on a dark surface, wired & wireless connections
@@ -25,15 +25,15 @@ ZEA is an **Architecture Intelligence Engine**. Point it at any software reposit
 ## Quick Start
 
 ```bash
-pip install zea
+pip install system-design
 
 # Static analysis (no API key needed)
-zea analyze /path/to/your/repo
-zea visualize .zea/architecture_graph.json
+system-design analyze /path/to/your/repo
+system-design visualize .zea/architecture_graph.json
 
 # AI-powered full pipeline
 export ANTHROPIC_API_KEY=your_key_here
-zea ai-analyze /path/to/your/repo
+system-design ai-analyze /path/to/your/repo
 open .zea/architecture.html
 ```
 
@@ -41,7 +41,7 @@ open .zea/architecture.html
 
 ## The 3D System Design
 
-ZEA renders architecture as a proper system design scene — not a floating sphere graph:
+system-design renders architecture as a proper system design scene — not a floating sphere graph:
 
 | Element | What it represents |
 |---------|-------------------|
@@ -76,10 +76,10 @@ AI Analysis (Claude)     →  architecture.json + architecture.md
 ## CLI Commands
 
 ```bash
-zea analyze <repo>              # Static scan → graph
-zea ai-analyze <repo>           # Full AI pipeline → 3D design
-zea visualize <graph.json>      # Render 3D HTML from existing graph
-zea version                     # Show version
+system-design analyze <repo>              # Static scan → graph
+system-design ai-analyze <repo>           # Full AI pipeline → 3D design
+system-design visualize <graph.json>      # Render 3D HTML from existing graph
+system-design version                     # Show version
 ```
 
 ---
@@ -100,7 +100,7 @@ zea version                     # Show version
 
 ## Slash Commands (Claude Code)
 
-Copy `skills/claude-code/SKILL.md` → `.claude/skills/zea/SKILL.md` in your project:
+Copy `skills/claude-code/SKILL.md` → `.claude/skills/system-design/SKILL.md` in your project:
 
 | Command | Description |
 |---------|-------------|
@@ -113,7 +113,7 @@ Copy `skills/claude-code/SKILL.md` → `.claude/skills/zea/SKILL.md` in your pro
 
 ---
 
-## What ZEA Detects
+## What system-design Detects
 
 **Languages:** Python · TypeScript · JavaScript · Java · Go · C# · Rust · Kotlin · PHP · Ruby
 
@@ -152,8 +152,8 @@ Copy `skills/claude-code/SKILL.md` → `.claude/skills/zea/SKILL.md` in your pro
 ## Contributing
 
 ```bash
-git clone https://github.com/manish-surya-r/ZEA.git
-cd ZEA
+git clone https://github.com/manish-surya/system-design.git
+cd system-design
 pip install -e ".[dev]"
 pytest
 ```

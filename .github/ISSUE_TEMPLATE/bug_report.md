@@ -14,7 +14,7 @@ A clear and concise description of what went wrong.
 
 ```bash
 # Command you ran
-zea analyze /path/to/repo
+system-design analyze /path/to/repo
 ```
 
 Include any relevant flags or options.

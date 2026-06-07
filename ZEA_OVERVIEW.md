@@ -1,8 +1,8 @@
-# ZEA — Zealous Engine for Architectures
+# system-design — Architecture Intelligence Engine
 
 **Turn any repository into a living 3D architecture graph.**
 
-ZEA is an open-source Architecture Intelligence Engine. Point it at any codebase and it automatically discovers services, APIs, databases, events, and infrastructure — then renders them as an interactive 3D system design you can explore in your browser.
+system-design is an open-source Architecture Intelligence Engine. Point it at any codebase and it automatically discovers services, APIs, databases, events, and infrastructure — then renders them as an interactive 3D system design you can explore in your browser.
 
 ---
 
@@ -10,20 +10,20 @@ ZEA is an open-source Architecture Intelligence Engine. Point it at any codebase
 
 | | |
 |---|---|
-| 🐙 GitHub | [github.com/manish-surya/ZEA](https://github.com/manish-surya/ZEA) |
-| 📦 PyPI | `pip install zea` *(coming soon)* |
-| 📄 Docs | [github.com/manish-surya/ZEA/docs](https://github.com/manish-surya/ZEA/tree/master/docs) |
-| 🐛 Issues | [github.com/manish-surya/ZEA/issues](https://github.com/manish-surya/ZEA/issues) |
+| 🐙 GitHub | [github.com/manish-surya/system-design](https://github.com/manish-surya/system-design) |
+| 📦 PyPI | `pip install system-design` *(coming soon)* |
+| 📄 Docs | [github.com/manish-surya/system-design/docs](https://github.com/manish-surya/system-design/tree/master/docs) |
+| 🐛 Issues | [github.com/manish-surya/system-design/issues](https://github.com/manish-surya/system-design/issues) |
 
 ---
 
 ## Install
 
 ```bash
-pip install zea
+pip install system-design
 
 # Optional: for AI-powered analysis
-pip install zea anthropic
+pip install system-design anthropic
 export ANTHROPIC_API_KEY=your_key_here
 ```
 
@@ -34,10 +34,10 @@ export ANTHROPIC_API_KEY=your_key_here
 ### Static Analysis (no API key needed)
 ```bash
 # Scan any repository
-zea analyze /path/to/your/repo
+system-design analyze /path/to/your/repo
 
 # Generate 3D visualization from the graph
-zea visualize .zea/architecture_graph.json
+system-design visualize .zea/architecture_graph.json
 
 # Open in browser
 open .zea/architecture.html
@@ -47,7 +47,7 @@ open .zea/architecture.html
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
 
-zea ai-analyze /path/to/your/repo
+system-design ai-analyze /path/to/your/repo
 open .zea/architecture.html
 ```
 
@@ -76,8 +76,8 @@ This runs the full pipeline in one command:
 Copy the skill into your project and use directly inside Claude Code:
 
 ```bash
-mkdir -p .claude/skills/zea
-curl -o .claude/skills/zea/SKILL.md \
+mkdir -p .claude/skills/system-design
+curl -o .claude/skills/system-design/SKILL.md \
   https://raw.githubusercontent.com/manish-surya/ZEA/master/skills/claude-code/SKILL.md
 ```
 
@@ -94,7 +94,7 @@ Then type in Claude Code:
 
 ---
 
-## What ZEA Detects
+## What system-design Detects
 
 - **Languages** — Python, TypeScript, JavaScript, Java, Go, C#, Rust, Kotlin, PHP, Ruby
 - **Frameworks** — FastAPI, Django, Flask, Next.js, React, Angular, Vue, Express, NestJS, Spring, Gin
@@ -123,7 +123,7 @@ The `architecture.html` file is completely standalone — no server needed. Open
 
 ## Current Status
 
-ZEA v0.1.0 is an **alpha release**. The following milestones are complete:
+system-design v0.1.0 is an **alpha release**. The following milestones are complete:
 
 - ✅ CLI Framework
 - ✅ Repository Discovery
